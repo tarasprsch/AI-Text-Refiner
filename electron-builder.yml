@@ -1,0 +1,23 @@
+appId: com.aitextrefiner.app
+productName: AI Text Refiner
+directories:
+  buildResources: build
+files:
+  - out/**/*
+  - resources/**
+asarUnpack:
+  - resources/**
+win:
+  executableName: ai-text-refiner
+  icon: resources/icon.ico
+  requestedExecutionLevel: asInvoker
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: false
+mac:
+  icon: resources/icon.png
+linux:
+  icon: resources/icon.png
+npmRebuild: false
