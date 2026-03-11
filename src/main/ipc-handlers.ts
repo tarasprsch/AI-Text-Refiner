@@ -7,9 +7,7 @@ import { AppSettings, ModelEntry } from '../renderer/src/types/api'
 import { registerHotkey } from './shortcuts'
 
 function loadModels(): ModelEntry[] {
-  const modelsPath = app.isPackaged
-    ? join(process.resourcesPath, 'resources', 'geminiModels.json')
-    : join(app.getAppPath(), 'resources', 'geminiModels.json')
+  const modelsPath = join(app.getAppPath(), 'geminiModels.json')
   return JSON.parse(readFileSync(modelsPath, 'utf-8'))
 }
 

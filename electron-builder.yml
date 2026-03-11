@@ -5,6 +5,7 @@ directories:
 files:
   - out/**/*
   - resources/**
+  - geminiModels.json
 asarUnpack:
   - resources/**
 win:
