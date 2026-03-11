@@ -2,6 +2,8 @@
 
 A lightweight Windows system tray application that can improve your text using Google Gemini AI. Copy any text, press a hotkey, and instantly get multiple improved variants — perfect for polishing workplace chat messages before sending them.
 
+![main window](docs/images/screenshot-main-window.png)
+
 ## Features
 
 - **One-hotkey workflow** — press `Ctrl+Shift+Space` (customizable) from any app to open the refiner window with your clipboard text pre-filled
@@ -11,6 +13,8 @@ A lightweight Windows system tray application that can improve your text using G
 - **Configurable Gemini model** — choose between Gemini 2.5 Flash Lite, 2.5 Flash, 2.5 Pro, 3.1 Flash Lite, and 3.1 Pro
 - **Customizable hotkeys** — record a new global hotkey and a submit shortcut directly in Settings
 - **System tray app** — runs quietly in the background, no taskbar clutter
+
+![settings page](docs/images/screenshot-settings-page.png)
 
 ## Prerequisites
 
@@ -25,6 +29,8 @@ To use this app you need a Google Gemini API key. The free tier is generous and 
 5. Your API key will be displayed — copy it
 6. Open **AI Text Refiner → Settings** and paste the key into the API Key field, then click **Save Key**
 
+![main window](docs/images/screenshot-google-apikey.png)
+
 ### Free tier limits
 
 Google provides a free tier for the Gemini API that includes:
@@ -37,13 +43,14 @@ No billing account or credit card is required for the free tier. You can check y
 
 ## Usage
 
-1. Launch the app — it appears as an icon in the system tray.
-2. Open **Settings** and paste your Gemini API key.
-3. Copy any text to your clipboard.
-4. Press `Ctrl+Shift+Space` (or your custom hotkey).
-5. The app window opens with the clipboard text loaded. Press `Ctrl+Enter` to check.
-6. Pick a variant and click to copy, or type a follow-up request for further refinement.
-7. Press `Escape` or click away to hide the window.
+1. Launch the app — it appears as an icon in the system tray
+2. Copy any text to your clipboard (`Ctrl+C`)
+3. Press `Ctrl+Shift+Space` (or your custom hotkey) — the app window opens with your clipboard text already loaded
+4. Press `Ctrl+Enter` to refine — you'll get three improved variants
+5. Not happy with the results? Type feedback in the "Ask for changes…" field (e.g. "Make it shorter", "More formal") and submit again. Repeat until you're satisfied
+   **Tip:** Use the History tab to review your previous refinement requests.
+6. Click any variant to copy it to your clipboard
+7. Press `Escape` or click away to hide the window
 
 ## Tech Stack
 
