@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { AppSettings, GeminiModel, SubmitHotkey } from '../types/api'
+import type { AppSettings, ModelEntry, SubmitHotkey } from '../types/api'
 
 interface Props {
   settings: AppSettings
@@ -15,6 +15,11 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
   const [isRecording, setIsRecording] = useState(false)
   const [hotkeyStatus, setHotkeyStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [apiKeySaved, setApiKeySaved] = useState(false)
+  const [models, setModels] = useState<ModelEntry[]>([])
+
+  useEffect(() => {
+    window.api.getModels().then(setModels)
+  }, [])
 
   useEffect(() => {
     if (!isRecording) return
@@ -107,13 +112,11 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
         <select
           className="select-input"
           value={settings.geminiModel}
-          onChange={(e) => onUpdate('geminiModel', e.target.value as GeminiModel)}
+          onChange={(e) => onUpdate('geminiModel', e.target.value)}
         >
-          <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-          <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-          <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-          <option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite (recommended)</option>
-          <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
+          {models.map((m) => (
+            <option key={m.id} value={m.id}>{m.label}</option>
+          ))}
         </select>
       </section>
 

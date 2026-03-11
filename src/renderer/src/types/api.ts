@@ -1,28 +1,27 @@
 export type SubmitHotkey = 'Ctrl+Enter' | 'Ctrl+Shift+Enter' | 'Enter'
 
-export type GeminiModel =
-  | 'gemini-2.5-flash-lite'
-  | 'gemini-2.5-flash'
-  | 'gemini-2.5-pro'
-  | 'gemini-3.1-flash-lite'
-  | 'gemini-3.1-pro'
+export interface ModelEntry {
+  id: string
+  label: string
+}
 
 export interface AppSettings {
   geminiApiKey: string
-  geminiModel: GeminiModel
+  geminiModel: string
   hotkey: string
   submitHotkey: SubmitHotkey
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
   geminiApiKey: '',
-  geminiModel: 'gemini-3.1-flash-lite',
+  geminiModel: 'gemini-2.5-flash-lite',
   hotkey: 'Ctrl+Shift+Space',
   submitHotkey: 'Ctrl+Enter'
 }
 
 export interface ElectronAPI {
   readClipboard: () => Promise<string>
+  getModels: () => Promise<ModelEntry[]>
   getSettings: () => Promise<AppSettings>
   setSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => Promise<void>
   registerShortcut: (accelerator: string) => Promise<boolean>

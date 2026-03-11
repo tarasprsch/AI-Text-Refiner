@@ -4,6 +4,8 @@ import type { ElectronAPI } from '../renderer/src/types/api'
 const api: ElectronAPI = {
   readClipboard: () => ipcRenderer.invoke('clipboard:read'),
 
+  getModels: () => ipcRenderer.invoke('models:get'),
+
   getSettings: () => ipcRenderer.invoke('settings:get'),
 
   setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
