@@ -1,18 +1,26 @@
 import { globalShortcut, clipboard } from 'electron'
 import type { BrowserWindow } from 'electron'
-import { showAndFocusWindow } from './tray'
+import type { WindowVisibilityManager } from './window-manager'
 
-export function setupShortcuts(win: BrowserWindow, hotkey: string): void {
-  registerHotkey(win, hotkey)
+export function setupShortcuts(
+  win: BrowserWindow,
+  visibility: WindowVisibilityManager,
+  hotkey: string
+): void {
+  registerHotkey(win, visibility, hotkey)
 }
 
-export function registerHotkey(win: BrowserWindow, accelerator: string): boolean {
+export function registerHotkey(
+  win: BrowserWindow,
+  visibility: WindowVisibilityManager,
+  accelerator: string
+): boolean {
   globalShortcut.unregisterAll()
 
   try {
     const success = globalShortcut.register(accelerator, () => {
       const clipboardText = clipboard.readText()
-      showAndFocusWindow(win)
+      visibility.show()
       setTimeout(() => {
         win.webContents.send('hotkey:triggered', clipboardText)
       }, 100)

@@ -10,7 +10,7 @@ function App(): React.JSX.Element {
   const { settings, loading, updateSetting } = useSettings()
 
   useEffect(() => {
-    const unsubscribe = window.api.onNavigate((view) => {
+    const unsubscribe = window.api.on('navigate', (view) => {
       setCurrentView(view === 'settings' ? 'settings' : 'main')
     })
     return unsubscribe
@@ -18,7 +18,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') window.api.hideWindow()
+      if (e.key === 'Escape') window.api.invoke('window:hide')
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)

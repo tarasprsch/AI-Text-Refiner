@@ -3,6 +3,8 @@ import { join } from 'path'
 import { setupIpcHandlers } from './ipc-handlers'
 import { setupShortcuts } from './shortcuts'
 import { setupTray } from './tray'
+import { createWindowVisibilityManager } from './window-manager'
+import { createSettingsStore, ElectronStorageBackend } from './settings-store'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -27,17 +29,6 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('close', (event) => {
-    event.preventDefault()
-    mainWindow!.hide()
-  })
-
-  mainWindow.on('blur', () => {
-    if (app.isPackaged) {
-      mainWindow!.hide()
-    }
-  })
-
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return { action: 'deny' }
@@ -52,23 +43,34 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
-  // Lazy-require electron-store after app is ready to avoid Electron 39 module init conflicts
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Store = require('electron-store')
-  const store = new Store({
-    defaults: {
-      geminiApiKey: '',
-      hotkey: 'Ctrl+Shift+Space',
-      submitHotkey: 'Ctrl+Enter'
-    }
-  })
-
   app.setAppUserModelId('com.aitextrefiner.app')
 
   createWindow()
-  setupTray(mainWindow!)
-  setupShortcuts(mainWindow!, store.get('hotkey', 'Ctrl+Shift+Space') as string)
-  setupIpcHandlers(mainWindow!, store)
+
+  const settings = createSettingsStore(new ElectronStorageBackend())
+  const visibility = createWindowVisibilityManager(mainWindow!)
+
+  // Close hides to tray instead of quitting
+  mainWindow!.on('close', (event) => {
+    event.preventDefault()
+    visibility.hide()
+  })
+
+  // Hide on blur in packaged mode
+  mainWindow!.on('blur', () => {
+    if (app.isPackaged) {
+      visibility.hide()
+    }
+  })
+
+  // Push settings changes to renderer
+  settings.onChange((s) => {
+    mainWindow!.webContents.send('settings:changed', s)
+  })
+
+  setupTray(visibility)
+  setupShortcuts(mainWindow!, visibility, settings.getAll().hotkey)
+  setupIpcHandlers(mainWindow!, settings, visibility)
 })
 
 app.on('window-all-closed', () => {

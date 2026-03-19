@@ -1,29 +1,23 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { ElectronAPI } from '../renderer/src/types/api'
+import type { IpcRendererBridge, CommandChannel, EventChannel } from '../shared/ipc-contract'
+import { ALLOWED_COMMANDS, ALLOWED_EVENTS } from '../shared/ipc-contract'
 
-const api: ElectronAPI = {
-  readClipboard: () => ipcRenderer.invoke('clipboard:read'),
-
-  getModels: () => ipcRenderer.invoke('models:get'),
-
-  getSettings: () => ipcRenderer.invoke('settings:get'),
-
-  setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
-
-  registerShortcut: (accelerator) => ipcRenderer.invoke('shortcut:register', accelerator),
-
-  hideWindow: () => ipcRenderer.invoke('window:hide'),
-
-  onHotkeyTriggered: (callback) => {
-    const handler = (_event: Electron.IpcRendererEvent, text: string): void => callback(text)
-    ipcRenderer.on('hotkey:triggered', handler)
-    return () => ipcRenderer.removeListener('hotkey:triggered', handler)
+const api: IpcRendererBridge = {
+  invoke(channel: CommandChannel, ...args: unknown[]) {
+    if (!ALLOWED_COMMANDS.has(channel)) {
+      throw new Error(`Blocked IPC channel: ${channel}`)
+    }
+    return ipcRenderer.invoke(channel, ...args)
   },
 
-  onNavigate: (callback) => {
-    const handler = (_event: Electron.IpcRendererEvent, view: string): void => callback(view)
-    ipcRenderer.on('navigate', handler)
-    return () => ipcRenderer.removeListener('navigate', handler)
+  on(channel: EventChannel, listener: (...args: unknown[]) => void) {
+    if (!ALLOWED_EVENTS.has(channel)) {
+      throw new Error(`Blocked IPC event: ${channel}`)
+    }
+    const handler = (_event: Electron.IpcRendererEvent, ...args: unknown[]): void =>
+      listener(...args)
+    ipcRenderer.on(channel, handler)
+    return () => ipcRenderer.removeListener(channel, handler)
   }
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ResultPanel } from '../components/ResultPanel'
-import { useGemini } from '../hooks/useGemini'
-import type { AppSettings } from '../types/api'
+import { useTextRefinement } from '../hooks/useTextRefinement'
+import type { AppSettings } from '../../../shared/ipc-contract'
 
 interface Props {
   settings: AppSettings
@@ -13,27 +13,30 @@ export function GrammarCheckView({ settings }: Props) {
   const [messageHistory, setMessageHistory] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'editor' | 'history'>('editor')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { checkGrammar, sendFollowUp, result, loading, error, reset } = useGemini()
+  const session = useTextRefinement({
+    apiKey: settings.geminiApiKey,
+    model: settings.geminiModel
+  })
 
   useEffect(() => {
-    const unsubscribe = window.api.onHotkeyTriggered((clipboardText) => {
+    const unsubscribe = window.api.on('hotkey:triggered', (clipboardText) => {
       setInputText(clipboardText)
       setFollowUpText('')
       setMessageHistory([])
       setActiveTab('editor')
-      reset()
+      session.reset()
       setTimeout(() => textareaRef.current?.focus(), 50)
     })
     return unsubscribe
-  }, [reset])
+  }, [session.reset])
 
   const hasApiKey = Boolean(settings.geminiApiKey)
-  const isEnabled = !loading && !!inputText.trim() && hasApiKey
+  const isEnabled = !session.loading && !!inputText.trim() && hasApiKey
 
   const handleCheck = async () => {
     setFollowUpText('')
     setMessageHistory([inputText])
-    await checkGrammar(inputText, settings.geminiApiKey, settings.geminiModel)
+    await session.check(inputText)
   }
 
   const handleFollowUp = async () => {
@@ -41,7 +44,7 @@ export function GrammarCheckView({ settings }: Props) {
     const message = followUpText
     setFollowUpText('')
     setMessageHistory((prev) => [...prev, message])
-    await sendFollowUp(message)
+    await session.followUp(message)
   }
 
   const matchesSubmitHotkey = (e: React.KeyboardEvent): boolean => {
@@ -109,10 +112,10 @@ export function GrammarCheckView({ settings }: Props) {
               onKeyDown={handleInputKeyDown}
               placeholder={`Paste or type text here, or press your hotkey to auto-fill from clipboard. ${settings.submitHotkey} to check.`}
               rows={6}
-              disabled={loading}
+              disabled={session.loading}
             />
             <button onClick={handleCheck} disabled={!isEnabled} className="btn-primary">
-              {loading && !result ? 'Checking...' : 'Check Grammar'}
+              {session.loading && !session.result ? 'Checking...' : 'Check Grammar'}
             </button>
           </div>
         )}
@@ -137,7 +140,7 @@ export function GrammarCheckView({ settings }: Props) {
         )}
       </section>
 
-      {result && (
+      {session.hasSession && session.result && (
         <section className="chat-input-section">
           <textarea
             value={followUpText}
@@ -145,23 +148,25 @@ export function GrammarCheckView({ settings }: Props) {
             onKeyDown={handleFollowUpKeyDown}
             placeholder='Ask for changes... e.g. "Make it more formal" or "Shorter version"'
             rows={2}
-            disabled={loading}
+            disabled={session.loading}
           />
           <button
             onClick={handleFollowUp}
-            disabled={loading || !followUpText.trim()}
+            disabled={session.loading || !followUpText.trim()}
             className="btn-primary btn-send"
           >
-            {loading && result ? 'Sending...' : 'Send'}
+            {session.loading && session.result ? 'Sending...' : 'Send'}
           </button>
         </section>
       )}
 
-      {loading && <div className="loading-state">Analysing with Gemini...</div>}
+      {session.loading && <div className="loading-state">Analysing with Gemini...</div>}
 
-      {error && <div className="error-panel">{error}</div>}
+      {session.error && <div className="error-panel">{session.error}</div>}
 
-      {result && <ResultPanel options={result.options} explanation={result.explanation} />}
+      {session.result && (
+        <ResultPanel options={session.result.options} explanation={session.result.explanation} />
+      )}
     </div>
   )
 }

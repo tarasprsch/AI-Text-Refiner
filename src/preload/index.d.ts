@@ -1,7 +1,7 @@
-import type { ElectronAPI } from '../renderer/src/types/api'
+import type { IpcRendererBridge } from '../shared/ipc-contract'
 
 declare global {
   interface Window {
-    api: ElectronAPI
+    api: IpcRendererBridge
   }
 }

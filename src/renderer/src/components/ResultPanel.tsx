@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import type { GeminiOption } from '../hooks/useGemini'
+import type { TextOption } from '../hooks/useTextRefinement'
 
 interface Props {
-  options: GeminiOption[]
+  options: TextOption[]
   explanation?: string
 }
 
