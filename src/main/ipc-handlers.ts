@@ -1,26 +1,12 @@
+import { app, clipboard, ipcMain } from 'electron'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import type { BrowserWindow } from 'electron'
-import { app, clipboard, ipcMain } from 'electron'
 import type { CommandChannel, CommandHandler, ModelEntry } from '../shared/ipc-contract'
-import type { SettingsStore } from './settings-store'
-import type { WindowVisibilityManager } from './window-manager'
-import { registerHotkey } from './shortcuts'
+import type { MainWindow } from './MainWindow'
+import type { SettingsStore } from './utils/SettingsStore'
+import { registerHotkey } from './utils/shortcuts'
 
-function handle<C extends CommandChannel>(channel: C, handler: CommandHandler<C>): void {
-  ipcMain.handle(channel, (_event, ...args) => handler(...(args as Parameters<CommandHandler<C>>)))
-}
-
-function loadModels(): ModelEntry[] {
-  const modelsPath = join(app.getAppPath(), 'geminiModels.json')
-  return JSON.parse(readFileSync(modelsPath, 'utf-8'))
-}
-
-export function setupIpcHandlers(
-  win: BrowserWindow,
-  settings: SettingsStore,
-  visibility: WindowVisibilityManager
-): void {
+export function setupIpcHandlers(mainWindow: MainWindow, settings: SettingsStore): void {
   handle('clipboard:read', () => clipboard.readText())
 
   handle('models:get', () => loadModels())
@@ -32,12 +18,20 @@ export function setupIpcHandlers(
   })
 
   handle('shortcut:register', (accelerator) => {
-    const success = registerHotkey(win, visibility, accelerator)
-    if (success) {
-      settings.set('hotkey', accelerator)
-    }
+    const success = registerHotkey(mainWindow, accelerator)
+    if (success) settings.set('hotkey', accelerator)
+
     return success
   })
 
-  handle('window:hide', () => visibility.hide())
+  handle('window:hide', () => mainWindow.hide())
+}
+
+function handle<C extends CommandChannel>(channel: C, handler: CommandHandler<C>): void {
+  ipcMain.handle(channel, (_event, ...args) => handler(...(args as Parameters<CommandHandler<C>>)))
+}
+
+function loadModels(): ModelEntry[] {
+  const modelsPath = join(app.getAppPath(), 'geminiModels.json')
+  return JSON.parse(readFileSync(modelsPath, 'utf-8'))
 }

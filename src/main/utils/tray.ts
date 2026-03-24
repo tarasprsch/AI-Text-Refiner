@@ -1,10 +1,10 @@
 import { Tray, Menu, nativeImage, app } from 'electron'
 import { join } from 'path'
-import type { WindowVisibilityManager } from './window-manager'
+import type { MainWindow } from '../MainWindow'
 
 let tray: Tray | null = null
 
-export function setupTray(visibility: WindowVisibilityManager): void {
+export function setupTray(mainWindow: MainWindow): void {
   const iconPath = app.isPackaged
     ? join(process.resourcesPath, 'app.asar.unpacked/resources/icon.png')
     : join(__dirname, '../../resources/icon.png')
@@ -12,27 +12,27 @@ export function setupTray(visibility: WindowVisibilityManager): void {
   const icon = nativeImage.createFromPath(iconPath)
   tray = new Tray(icon.resize({ width: 16, height: 16 }))
   tray.setToolTip('AI Text Refiner')
-  tray.setContextMenu(buildContextMenu(visibility))
+  tray.setContextMenu(buildContextMenu(mainWindow))
 
   tray.on('click', () => {
-    visibility.toggle()
+    mainWindow.toggle()
   })
 
   tray.on('right-click', () => {
-    tray!.setContextMenu(buildContextMenu(visibility))
+    tray!.setContextMenu(buildContextMenu(mainWindow))
     tray!.popUpContextMenu()
   })
 }
 
-function buildContextMenu(visibility: WindowVisibilityManager): Menu {
+function buildContextMenu(mainWindow: MainWindow): Menu {
   return Menu.buildFromTemplate([
     {
       label: 'Open',
-      click: () => visibility.show()
+      click: () => mainWindow.show()
     },
     {
       label: 'Settings',
-      click: () => visibility.show('settings')
+      click: () => mainWindow.show('settings')
     },
     { type: 'separator' },
     {

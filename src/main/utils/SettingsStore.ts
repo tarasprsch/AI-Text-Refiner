@@ -1,6 +1,6 @@
 import ElectronStore from 'electron-store'
-import type { AppSettings, SubmitHotkey } from '../shared/ipc-contract'
-import { SETTINGS_DEFAULTS } from '../shared/ipc-contract'
+import type { AppSettings, SubmitHotkey } from '../../shared/ipc-contract'
+import { SETTINGS_DEFAULTS } from '../../shared/ipc-contract'
 
 export class SettingsValidationError extends Error {
   constructor(

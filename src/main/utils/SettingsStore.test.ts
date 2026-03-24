@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { SETTINGS_DEFAULTS } from '../shared/ipc-contract'
+import { SETTINGS_DEFAULTS } from '../../shared/ipc-contract'
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/tmp/test', getVersion: () => '1.0.0' },
@@ -21,7 +21,7 @@ vi.mock('electron-store', () => {
 })
 
 // Import after mocks are set up (vitest hoists vi.mock automatically)
-const { SettingsStore, SettingsValidationError } = await import('./settings-store')
+const { SettingsStore, SettingsValidationError } = await import('./SettingsStore')
 
 describe('SettingsStore', () => {
   let settingsStore: InstanceType<typeof SettingsStore>
