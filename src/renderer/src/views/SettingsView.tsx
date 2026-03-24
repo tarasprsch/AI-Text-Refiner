@@ -1,6 +1,7 @@
-import './SettingsView.css'
 import { useEffect, useState } from 'react'
 import type { AppSettings, ModelEntry, SubmitHotkey } from '../../../shared/ipc-contract'
+import { ipcApi } from '../api/ipcApi'
+import './SettingsView.css'
 
 interface Props {
   settings: AppSettings
@@ -19,7 +20,7 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
   const [models, setModels] = useState<ModelEntry[]>([])
 
   useEffect(() => {
-    window.api.invoke('models:get').then(setModels)
+    ipcApi.getModels().then(setModels)
   }, [])
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
   }
 
   const handleApplyHotkey = async () => {
-    const success = await window.api.invoke('shortcut:register', hotkey)
+    const success = await ipcApi.registerShortcut(hotkey)
     if (success) {
       await onUpdate('hotkey', hotkey)
       setHotkeyStatus('success')

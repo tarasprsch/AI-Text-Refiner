@@ -1,5 +1,6 @@
-import './App.css'
 import { useEffect, useState } from 'react'
+import { ipcApi } from './api/ipcApi'
+import './App.css'
 import { useSettings } from './hooks/useSettings'
 import { MainView } from './views/MainView'
 import { SettingsView } from './views/SettingsView'
@@ -11,7 +12,7 @@ function App(): React.JSX.Element {
   const { settings, loading, updateSetting } = useSettings()
 
   useEffect(() => {
-    const unsubscribe = window.api.on('navigate', (view) => {
+    const unsubscribe = ipcApi.onNavigate((view) => {
       setCurrentView(view === 'settings' ? 'settings' : 'main')
     })
     return unsubscribe
@@ -19,7 +20,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') window.api.invoke('window:hide')
+      if (e.key === 'Escape') void ipcApi.hideWindow()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)

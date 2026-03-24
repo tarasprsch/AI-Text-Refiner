@@ -1,8 +1,9 @@
-import './MainView.css'
 import { useEffect, useRef, useState } from 'react'
 import type { AppSettings } from '../../../shared/ipc-contract'
+import { ipcApi } from '../api/ipcApi'
 import { ResultPanel } from '../components/ResultPanel'
 import { useTextRefinement } from '../hooks/useTextRefinement'
+import './MainView.css'
 
 interface Props {
   settings: AppSettings
@@ -19,7 +20,7 @@ export function MainView({ settings }: Props) {
   const sessionReset = session.reset
 
   useEffect(() => {
-    const unsubscribe = window.api.on('hotkey:triggered', (clipboardText) => {
+    const unsubscribe = ipcApi.onHotkeyTriggered((clipboardText) => {
       setInputText(clipboardText)
       setFollowUpText('')
       setMessageHistory([])
