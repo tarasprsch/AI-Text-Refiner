@@ -1,6 +1,6 @@
 import { app } from 'electron'
 import { setupIpcHandlers } from './ipc-handlers'
-import { MainWindow } from './MainWindow'
+import { MainWindow } from './utils/MainWindow'
 import { SettingsStore } from './utils/SettingsStore'
 import { setupShortcuts } from './utils/shortcuts'
 import { setupTray } from './utils/tray'

@@ -33,8 +33,8 @@ export interface IpcCommands {
 // ── IPC Events (main pushes to renderer) ──
 
 export interface IpcEvents {
+  navigate: { params: [view: string] }
   'hotkey:triggered': { params: [text: string] }
-  'navigate': { params: [view: string] }
   'settings:changed': { params: [settings: AppSettings] }
 }
 
