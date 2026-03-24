@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { ipcApi } from './api/ipcApi'
 import './App.css'
 import { IconSettings } from './components/IconSettings'
-import { useSettings } from './hooks/useSettings'
+import { useSettings } from './views/MainView/hooks/useSettings'
 import { MainView } from './views/MainView'
-import { SettingsView } from './views/SettingsView'
+import { SettingsView } from './views/SettingsView/SettingsView'
 
 type View = 'main' | 'settings'
 

@@ -1,6 +1,6 @@
 import './ResultPanel.css'
 import { useState } from 'react'
-import type { TextOption } from '../../../hooks/useTextRefinement'
+import type { TextOption } from '../hooks/useTextRefinement'
 
 interface Props {
   options: TextOption[]

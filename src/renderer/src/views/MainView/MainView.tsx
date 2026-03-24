@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import type { AppSettings } from '../../../shared/ipc-contract'
-import { ipcApi } from '../api/ipcApi'
-import { ResultPanel } from '../components/ResultPanel'
-import { useTextRefinement } from '../hooks/useTextRefinement'
+import type { AppSettings } from '@shared/ipc-contract'
+import { ipcApi } from '../../api/ipcApi'
+import { ResultPanel } from './components/ResultPanel'
+import { useTextRefinement } from './hooks/useTextRefinement'
 import './MainView.css'
 
 interface Props {
