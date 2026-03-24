@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'electron-vite'
 import { resolve } from 'path'
+import checker from 'vite-plugin-checker'
 
 export default defineConfig({
   main: {
@@ -24,6 +25,14 @@ export default defineConfig({
         '@shared': resolve('src/shared')
       }
     },
-    plugins: [react()]
+    plugins: [
+      react(),
+      checker({
+        typescript: {
+          tsconfigPath: 'tsconfig.json',
+          buildMode: true
+        }
+      })
+    ]
   }
 })
