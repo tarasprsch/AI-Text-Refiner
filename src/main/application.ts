@@ -12,6 +12,7 @@ if (!gotTheLock) {
 }
 
 let mainWindow: MainWindow | null = null
+let isAppTerminating = false
 
 app.whenReady().then(() => {
   app.setAppUserModelId('com.aitextrefiner.app')
@@ -22,6 +23,7 @@ app.whenReady().then(() => {
 
   // Close hides to tray instead of quitting
   mainWindow.browserWindow.on('close', (event) => {
+    if (isAppTerminating) return
     event.preventDefault()
     mainWindow!.hide()
   })
@@ -41,6 +43,10 @@ app.whenReady().then(() => {
   setupTray(mainWindow)
   setupShortcuts(mainWindow, settings.getAll().hotkey)
   setupIpcHandlers(mainWindow, settings)
+})
+
+app.on('before-quit', () => {
+  isAppTerminating = true
 })
 
 app.on('window-all-closed', () => {
