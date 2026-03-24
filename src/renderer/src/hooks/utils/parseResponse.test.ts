@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { parseResponse } from './useTextRefinement'
+import { describe, expect, it } from 'vitest'
+import { parseResponse } from './parseResponse'
 
 describe('parseResponse', () => {
   it('parses clean JSON with options and explanation', () => {

@@ -115,7 +115,9 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
           onChange={(e) => onUpdate('geminiModel', e.target.value)}
         >
           {models.map((m) => (
-            <option key={m.id} value={m.id}>{m.label}</option>
+            <option key={m.id} value={m.id}>
+              {m.label}
+            </option>
           ))}
         </select>
       </section>

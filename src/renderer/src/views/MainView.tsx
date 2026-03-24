@@ -1,22 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
+import type { AppSettings } from '../../../shared/ipc-contract'
 import { ResultPanel } from '../components/ResultPanel'
 import { useTextRefinement } from '../hooks/useTextRefinement'
-import type { AppSettings } from '../../../shared/ipc-contract'
 
 interface Props {
   settings: AppSettings
 }
 
-export function GrammarCheckView({ settings }: Props) {
+export function MainView({ settings }: Props) {
   const [inputText, setInputText] = useState('')
   const [followUpText, setFollowUpText] = useState('')
   const [messageHistory, setMessageHistory] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'editor' | 'history'>('editor')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const session = useTextRefinement({
-    apiKey: settings.geminiApiKey,
-    model: settings.geminiModel
-  })
+  const session = useTextRefinement(settings)
+
+  const sessionReset = session.reset
 
   useEffect(() => {
     const unsubscribe = window.api.on('hotkey:triggered', (clipboardText) => {
@@ -24,11 +23,11 @@ export function GrammarCheckView({ settings }: Props) {
       setFollowUpText('')
       setMessageHistory([])
       setActiveTab('editor')
-      session.reset()
+      sessionReset()
       setTimeout(() => textareaRef.current?.focus(), 50)
     })
     return unsubscribe
-  }, [session.reset])
+  }, [sessionReset])
 
   const hasApiKey = Boolean(settings.geminiApiKey)
   const isEnabled = !session.loading && !!inputText.trim() && hasApiKey

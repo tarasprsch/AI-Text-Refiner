@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSettings } from './hooks/useSettings'
-import { GrammarCheckView } from './views/GrammarCheckView'
+import { MainView } from './views/MainView'
 import { SettingsView } from './views/SettingsView'
 
 type View = 'main' | 'settings'
@@ -58,7 +58,7 @@ function App(): React.JSX.Element {
       </nav>
       <main className="app-content">
         {currentView === 'main' ? (
-          <GrammarCheckView settings={settings} />
+          <MainView settings={settings} />
         ) : (
           <SettingsView
             settings={settings}
