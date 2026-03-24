@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { SETTINGS_DEFAULTS } from '../../shared/ipc-contract'
+import { SETTINGS_DEFAULTS } from '@shared/ipc-contract'
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/tmp/test', getVersion: () => '1.0.0' },

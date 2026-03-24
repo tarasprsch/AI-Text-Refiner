@@ -1,5 +1,5 @@
-import { globalShortcut, clipboard } from 'electron'
-import type { MainWindow } from '../MainWindow'
+import { clipboard, globalShortcut } from 'electron'
+import type { MainWindow } from './MainWindow'
 
 export function setupShortcuts(mainWindow: MainWindow, hotkey: string): void {
   registerHotkey(mainWindow, hotkey)

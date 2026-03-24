@@ -1,4 +1,4 @@
-import type { IpcRendererBridge } from '../shared/ipc-contract'
+import type { IpcRendererBridge } from '@shared/ipc-contract'
 
 declare global {
   interface Window {

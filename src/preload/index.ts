@@ -4,8 +4,8 @@ import type {
   EventChannel,
   IpcEvents,
   IpcRendererBridge
-} from '../shared/ipc-contract'
-import { ALLOWED_COMMANDS, ALLOWED_EVENTS } from '../shared/ipc-contract'
+} from '@shared/ipc-contract'
+import { ALLOWED_COMMANDS, ALLOWED_EVENTS } from '@shared/ipc-contract'
 
 const api: IpcRendererBridge = {
   invoke(channel: CommandChannel, ...args: unknown[]) {

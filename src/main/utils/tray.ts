@@ -1,6 +1,6 @@
-import { Tray, Menu, nativeImage, app } from 'electron'
+import { app, Menu, nativeImage, Tray } from 'electron'
 import { join } from 'path'
-import type { MainWindow } from '../MainWindow'
+import type { MainWindow } from './MainWindow'
 
 let tray: Tray | null = null
 
