@@ -25,10 +25,7 @@ export function ResultPanel({ options, explanation }: Props) {
           <div key={i} className="option-card">
             <div className="option-card-header">
               <span className="option-label">{option.label}</span>
-              <button
-                onClick={() => handleCopy(option.correctedText, i)}
-                className="btn-copy"
-              >
+              <button onClick={() => handleCopy(option.correctedText, i)} className="btn-copy">
                 {copiedIndex === i ? '✓ Copied!' : 'Copy'}
               </button>
             </div>

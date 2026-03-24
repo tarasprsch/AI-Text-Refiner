@@ -4,7 +4,7 @@ import { setupIpcHandlers } from './ipc-handlers'
 import { setupShortcuts } from './shortcuts'
 import { setupTray } from './tray'
 import { createWindowVisibilityManager } from './window-manager'
-import { createSettingsStore, ElectronStorageBackend } from './settings-store'
+import { SettingsStore } from './settings-store'
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
@@ -47,7 +47,7 @@ app.whenReady().then(() => {
 
   createWindow()
 
-  const settings = createSettingsStore(new ElectronStorageBackend())
+  const settings = new SettingsStore()
   const visibility = createWindowVisibilityManager(mainWindow!)
 
   // Close hides to tray instead of quitting
