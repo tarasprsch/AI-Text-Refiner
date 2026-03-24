@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import type { AppSettings, ModelEntry, SubmitHotkey } from '../../../shared/ipc-contract'
+import type { AppSettings, ModelEntry } from '../../../shared/ipc-contract'
+import { SUBMIT_HOTKEY_OPTIONS } from '../../../shared/hotkeys'
+import type { SubmitHotkey } from '../../../shared/hotkeys'
 import { ipcApi } from '../api/ipcApi'
 import './SettingsView.css'
 
@@ -172,9 +174,11 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
           value={settings.submitHotkey}
           onChange={(e) => onUpdate('submitHotkey', e.target.value as SubmitHotkey)}
         >
-          <option value="Ctrl+Enter">Ctrl + Enter</option>
-          <option value="Ctrl+Shift+Enter">Ctrl + Shift + Enter</option>
-          <option value="Enter">Enter</option>
+          {SUBMIT_HOTKEY_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </section>
     </div>

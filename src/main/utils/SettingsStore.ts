@@ -1,5 +1,7 @@
 import ElectronStore from 'electron-store'
-import type { AppSettings, SubmitHotkey } from '../../shared/ipc-contract'
+import type { AppSettings } from '../../shared/ipc-contract'
+import type { SubmitHotkey } from '../../shared/hotkeys'
+import { VALID_SUBMIT_HOTKEYS } from '../../shared/hotkeys'
 import { SETTINGS_DEFAULTS } from '../../shared/ipc-contract'
 
 export class SettingsValidationError extends Error {
@@ -10,12 +12,6 @@ export class SettingsValidationError extends Error {
     super(`Invalid value for "${key}": ${reason}`)
   }
 }
-
-const VALID_SUBMIT_HOTKEYS: ReadonlySet<string> = new Set<SubmitHotkey>([
-  'Ctrl+Enter',
-  'Ctrl+Shift+Enter',
-  'Enter'
-])
 
 export class SettingsStore {
   private readonly listeners = new Set<(settings: AppSettings) => void>()
@@ -61,7 +57,7 @@ function validate<K extends keyof AppSettings>(key: K, value: AppSettings[K]): v
       }
       break
     case 'submitHotkey':
-      if (!VALID_SUBMIT_HOTKEYS.has(value as string)) {
+      if (!VALID_SUBMIT_HOTKEYS.has(value as SubmitHotkey)) {
         throw new SettingsValidationError(
           key,
           `must be one of: ${[...VALID_SUBMIT_HOTKEYS].join(', ')}`

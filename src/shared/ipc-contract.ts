@@ -1,4 +1,4 @@
-export type SubmitHotkey = 'Ctrl+Enter' | 'Ctrl+Shift+Enter' | 'Enter'
+import type { SubmitHotkey } from './hotkeys'
 
 export interface ModelEntry {
   id: string
