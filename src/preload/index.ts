@@ -1,5 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { IpcRendererBridge, CommandChannel, EventChannel } from '../shared/ipc-contract'
+import type {
+  CommandChannel,
+  EventChannel,
+  IpcEvents,
+  IpcRendererBridge
+} from '../shared/ipc-contract'
 import { ALLOWED_COMMANDS, ALLOWED_EVENTS } from '../shared/ipc-contract'
 
 const api: IpcRendererBridge = {
@@ -10,14 +15,16 @@ const api: IpcRendererBridge = {
     return ipcRenderer.invoke(channel, ...args)
   },
 
-  on(channel: EventChannel, listener: (...args: unknown[]) => void) {
+  on<E extends EventChannel>(channel: E, listener: (...args: IpcEvents[E]['params']) => void) {
     if (!ALLOWED_EVENTS.has(channel)) {
       throw new Error(`Blocked IPC event: ${channel}`)
     }
     const handler = (_event: Electron.IpcRendererEvent, ...args: unknown[]): void =>
-      listener(...args)
+      listener(...(args as IpcEvents[E]['params']))
     ipcRenderer.on(channel, handler)
-    return () => ipcRenderer.removeListener(channel, handler)
+    return () => {
+      ipcRenderer.removeListener(channel, handler)
+    }
   }
 }
 
@@ -28,6 +35,5 @@ if (process.contextIsolated) {
     console.error(error)
   }
 } else {
-  // @ts-ignore
   window.api = api
 }
