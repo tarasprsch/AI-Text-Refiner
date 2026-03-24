@@ -1,8 +1,8 @@
+import type { CommandChannel, CommandHandler, ModelEntry } from '@shared/ipc-contract'
 import { app, clipboard, ipcMain } from 'electron'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import type { CommandChannel, CommandHandler, ModelEntry } from '@shared/ipc-contract'
-import type { MainWindow } from './MainWindow'
+import { MainWindow } from './utils/MainWindow'
 import type { SettingsStore } from './utils/SettingsStore'
 import { registerHotkey } from './utils/shortcuts'
 
