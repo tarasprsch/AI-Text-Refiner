@@ -1,3 +1,4 @@
+import './SettingsView.css'
 import { useEffect, useState } from 'react'
 import type { AppSettings, ModelEntry, SubmitHotkey } from '../../../shared/ipc-contract'
 
@@ -69,18 +70,18 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
   }
 
   return (
-    <div className="settings-view">
-      <section className="settings-header">
-        <h2>Settings</h2>
-        <button onClick={onBack} className="btn-back">
+    <div className="settings">
+      <section className="settings__header">
+        <h2 className="settings__title">Settings</h2>
+        <button onClick={onBack} className="settings__back-btn">
           ← Back
         </button>
       </section>
 
-      <section className="settings-section">
-        <h3>Gemini API Key</h3>
-        <p className="settings-description">To get your free API key:</p>
-        <ol className="settings-instructions">
+      <section className="settings__section">
+        <h3 className="settings__section-title">Gemini API Key</h3>
+        <p className="settings__description">To get your free API key:</p>
+        <ol className="settings__instructions">
           <li>
             Go to{' '}
             <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">
@@ -90,7 +91,7 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
           <li>Click &ldquo;Create API key&rdquo; and copy it</li>
         </ol>
 
-        <div className="input-row">
+        <div className="settings__input-row">
           <input
             type="password"
             value={apiKey}
@@ -98,19 +99,19 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
             placeholder="AIza..."
             autoComplete="off"
           />
-          <button onClick={handleSaveApiKey} className="btn-primary">
+          <button onClick={handleSaveApiKey} className="settings__save-btn">
             {apiKeySaved ? '✓ Saved' : 'Save Key'}
           </button>
         </div>
       </section>
 
-      <section className="settings-section">
-        <h3>Gemini Model</h3>
-        <p className="settings-description">
+      <section className="settings__section">
+        <h3 className="settings__section-title">Gemini Model</h3>
+        <p className="settings__description">
           Choose which Gemini model to use for grammar checking.
         </p>
         <select
-          className="select-input"
+          className="settings__select"
           value={settings.geminiModel}
           onChange={(e) => onUpdate('geminiModel', e.target.value)}
         >
@@ -122,51 +123,51 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
         </select>
       </section>
 
-      <section className="settings-section">
-        <h3>Global Hotkey</h3>
-        <p className="settings-description">
+      <section className="settings__section">
+        <h3 className="settings__section-title">Global Hotkey</h3>
+        <p className="settings__description">
           Press this from any app to open the window and paste your clipboard.
         </p>
         <div className="hotkey-recorder">
-          <div className="hotkey-display">{hotkey}</div>
+          <div className="hotkey-recorder__display">{hotkey}</div>
           <button
             onClick={() => setIsRecording((r) => !r)}
-            className={`btn-record ${isRecording ? 'recording' : ''}`}
+            className={`hotkey-recorder__btn ${isRecording ? 'hotkey-recorder__btn--recording' : ''}`}
           >
             {isRecording ? 'Press a key combination...' : 'Change Hotkey'}
           </button>
           {isRecording && (
-            <button onClick={() => setIsRecording(false)} className="btn-secondary">
+            <button onClick={() => setIsRecording(false)} className="hotkey-recorder__cancel-btn">
               Cancel
             </button>
           )}
         </div>
-        <div className="hotkey-actions">
+        <div className="hotkey-recorder__actions">
           <button
             onClick={handleApplyHotkey}
-            className="btn-primary"
+            className="settings__apply-btn"
             disabled={hotkey === settings.hotkey}
           >
             Apply Hotkey
           </button>
           {hotkeyStatus === 'success' && (
-            <span className="status-success">Registered successfully.</span>
+            <span className="hotkey-recorder__status--success">Registered successfully.</span>
           )}
           {hotkeyStatus === 'error' && (
-            <span className="status-error">
+            <span className="hotkey-recorder__status--error">
               Failed — this combination may be taken by another app.
             </span>
           )}
         </div>
       </section>
 
-      <section className="settings-section">
-        <h3>Submit Shortcut</h3>
-        <p className="settings-description">
+      <section className="settings__section">
+        <h3 className="settings__section-title">Submit Shortcut</h3>
+        <p className="settings__description">
           Keyboard shortcut to submit text in the grammar check and follow-up fields.
         </p>
         <select
-          className="select-input"
+          className="settings__select"
           value={settings.submitHotkey}
           onChange={(e) => onUpdate('submitHotkey', e.target.value as SubmitHotkey)}
         >

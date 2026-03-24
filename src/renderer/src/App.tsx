@@ -1,3 +1,4 @@
+import './App.css'
 import { useEffect, useState } from 'react'
 import { useSettings } from './hooks/useSettings'
 import { MainView } from './views/MainView'
@@ -24,20 +25,20 @@ function App(): React.JSX.Element {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  if (loading) return <div className="loading-state">Loading...</div>
+  if (loading) return <div className="app__loading">Loading...</div>
 
   return (
     <div className="app">
-      <nav className="app-nav">
+      <nav className="app__nav">
         <button
-          className={currentView === 'main' ? 'active' : ''}
+          className={`app__nav-btn ${currentView === 'main' ? 'app__nav-btn--active' : ''}`}
           onClick={() => setCurrentView('main')}
         >
           Text Check
         </button>
-        <div className="nav-spacer" />
+        <div className="app__nav-spacer" />
         <button
-          className={`nav-icon-btn ${currentView === 'settings' ? 'active' : ''}`}
+          className={`app__nav-icon ${currentView === 'settings' ? 'app__nav-icon--active' : ''}`}
           onClick={() => setCurrentView('settings')}
           title="Settings"
         >
@@ -56,7 +57,7 @@ function App(): React.JSX.Element {
           </svg>
         </button>
       </nav>
-      <main className="app-content">
+      <main className="app__content">
         {currentView === 'main' ? (
           <MainView settings={settings} />
         ) : (

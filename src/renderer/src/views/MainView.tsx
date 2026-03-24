@@ -1,3 +1,4 @@
+import './MainView.css'
 import { useEffect, useRef, useState } from 'react'
 import type { AppSettings } from '../../../shared/ipc-contract'
 import { ResultPanel } from '../components/ResultPanel'
@@ -76,24 +77,24 @@ export function MainView({ settings }: Props) {
   }
 
   return (
-    <div className="grammar-check-view">
+    <div className="main-view">
       {!hasApiKey && (
-        <div className="warning-banner">
+        <div className="main-view__warning">
           No API key configured. Go to Settings to add your Gemini API key.
         </div>
       )}
 
-      <section className="tabbed-panel">
-        <div className="tab-bar">
+      <section className="tabs">
+        <div className="tabs__bar">
           <button
-            className={`tab-btn${activeTab === 'editor' ? ' active' : ''}`}
+            className={`tabs__btn${activeTab === 'editor' ? ' tabs__btn--active' : ''}`}
             onClick={() => setActiveTab('editor')}
           >
             Text to check
           </button>
           {messageHistory.length > 0 && (
             <button
-              className={`tab-btn${activeTab === 'history' ? ' active' : ''}`}
+              className={`tabs__btn${activeTab === 'history' ? ' tabs__btn--active' : ''}`}
               onClick={() => setActiveTab('history')}
             >
               Conversation history ({messageHistory.length})
@@ -102,7 +103,7 @@ export function MainView({ settings }: Props) {
         </div>
 
         {activeTab === 'editor' && (
-          <div className="tab-content">
+          <div className="tabs__content">
             <textarea
               ref={textareaRef}
               id="input-text"
@@ -113,24 +114,27 @@ export function MainView({ settings }: Props) {
               rows={6}
               disabled={session.loading}
             />
-            <button onClick={handleCheck} disabled={!isEnabled} className="btn-primary">
+            <button onClick={handleCheck} disabled={!isEnabled} className="main-view__check-btn">
               {session.loading && !session.result ? 'Checking...' : 'Check Grammar'}
             </button>
           </div>
         )}
 
         {activeTab === 'history' && (
-          <div className="tab-content">
+          <div className="tabs__content">
             {messageHistory.length === 0 ? (
-              <p className="tab-empty">No messages yet. Check some text to see history here.</p>
+              <p className="tabs__empty">No messages yet. Check some text to see history here.</p>
             ) : (
-              <div className="conversation-list">
+              <div className="conversation">
                 {messageHistory.map((msg, i) => (
-                  <div key={i} className={`conversation-msg ${i === 0 ? 'original' : 'followup'}`}>
-                    <span className="conversation-label">
+                  <div
+                    key={i}
+                    className={`conversation__message ${i === 0 ? 'conversation__message--original' : 'conversation__message--followup'}`}
+                  >
+                    <span className="conversation__label">
                       {i === 0 ? 'Original text' : `Follow-up #${i}`}
                     </span>
-                    <p className="conversation-text">{msg}</p>
+                    <p className="conversation__text">{msg}</p>
                   </div>
                 ))}
               </div>
@@ -140,7 +144,7 @@ export function MainView({ settings }: Props) {
       </section>
 
       {session.hasSession && session.result && (
-        <section className="chat-input-section">
+        <section className="main-view__chat">
           <textarea
             value={followUpText}
             onChange={(e) => setFollowUpText(e.target.value)}
@@ -152,16 +156,16 @@ export function MainView({ settings }: Props) {
           <button
             onClick={handleFollowUp}
             disabled={session.loading || !followUpText.trim()}
-            className="btn-primary btn-send"
+            className="main-view__send-btn"
           >
             {session.loading && session.result ? 'Sending...' : 'Send'}
           </button>
         </section>
       )}
 
-      {session.loading && <div className="loading-state">Analysing with Gemini...</div>}
+      {session.loading && <div className="main-view__loading">Analysing with Gemini...</div>}
 
-      {session.error && <div className="error-panel">{session.error}</div>}
+      {session.error && <div className="main-view__error">{session.error}</div>}
 
       {session.result && (
         <ResultPanel options={session.result.options} explanation={session.result.explanation} />

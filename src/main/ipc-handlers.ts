@@ -9,29 +9,24 @@ import { registerHotkey } from './utils/shortcuts'
 export function setupIpcHandlers(mainWindow: MainWindow, settings: SettingsStore): void {
   handle('clipboard:read', () => clipboard.readText())
 
-  handle('models:get', () => loadModels())
+  handle('models:get', () => {
+    const modelsPath = join(app.getAppPath(), 'geminiModels.json')
+    const result = JSON.parse(readFileSync(modelsPath, 'utf-8')) as ModelEntry[]
+    return result
+  })
 
   handle('settings:get', () => settings.getAll())
 
-  handle('settings:set', (key, value) => {
-    settings.set(key, value)
-  })
+  handle('settings:set', (key, value) => settings.set(key, value))
 
   handle('shortcut:register', (accelerator) => {
     const success = registerHotkey(mainWindow, accelerator)
     if (success) settings.set('hotkey', accelerator)
-
     return success
   })
 
   handle('window:hide', () => mainWindow.hide())
 }
 
-function handle<C extends CommandChannel>(channel: C, handler: CommandHandler<C>): void {
+const handle = <C extends CommandChannel>(channel: C, handler: CommandHandler<C>) =>
   ipcMain.handle(channel, (_event, ...args) => handler(...(args as Parameters<CommandHandler<C>>)))
-}
-
-function loadModels(): ModelEntry[] {
-  const modelsPath = join(app.getAppPath(), 'geminiModels.json')
-  return JSON.parse(readFileSync(modelsPath, 'utf-8'))
-}
