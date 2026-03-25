@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockSendMessage = vi.fn()
 
@@ -30,10 +30,6 @@ describe('useTextRefinement', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockSendMessage.mockResolvedValue(validResponse())
-  })
-
-  afterEach(() => {
-    vi.restoreAllMocks()
   })
 
   describe('initial state', () => {

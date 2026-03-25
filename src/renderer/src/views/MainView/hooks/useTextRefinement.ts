@@ -30,7 +30,7 @@ export function useTextRefinement(config: Props) {
       const raw = await chat.sendMessage(message)
       setResult(parseResponse(raw))
     } catch (err) {
-      setError(toUserError(err))
+      setError(getErrorText(err))
     } finally {
       setLoading(false)
     }
@@ -91,7 +91,7 @@ export function useTextRefinement(config: Props) {
   }
 }
 
-function toUserError(err: unknown): string {
+function getErrorText(err: unknown): string {
   if (err instanceof SyntaxError) return 'Gemini returned an unexpected format. Please try again.'
   if (err instanceof Error) return `API Error: ${err.message}`
   return 'An unknown error occurred.'

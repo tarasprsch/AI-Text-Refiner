@@ -1,81 +1,31 @@
 import { AppSettings } from '@shared/appSettings'
-import { useEffect, useRef, useState } from 'react'
-import { ipcApi } from '../../api/ipcApi'
 import { ResultPanel } from './components/ResultPanel'
-import { useTextRefinement } from './hooks/useTextRefinement'
 import './MainView.css'
+import { useMainView } from './useMainView'
 
 interface Props {
   settings: AppSettings
 }
 
 export function MainView({ settings }: Props) {
-  const [inputText, setInputText] = useState('')
-  const [followUpText, setFollowUpText] = useState('')
-  const [messageHistory, setMessageHistory] = useState<string[]>([])
-  const [activeTab, setActiveTab] = useState<'editor' | 'history'>('editor')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const session = useTextRefinement(settings)
-
-  const sessionReset = session.reset
-
-  useEffect(() => {
-    const unsubscribe = ipcApi.onHotkeyTriggered((clipboardText) => {
-      setInputText(clipboardText)
-      setFollowUpText('')
-      setMessageHistory([])
-      setActiveTab('editor')
-      sessionReset()
-      setTimeout(() => textareaRef.current?.focus(), 50)
-    })
-    return unsubscribe
-  }, [sessionReset])
-
-  const hasApiKey = Boolean(settings.geminiApiKey)
-  const isEnabled = !session.loading && !!inputText.trim() && hasApiKey
-
-  const handleCheck = async () => {
-    setFollowUpText('')
-    setMessageHistory([inputText])
-    await session.check(inputText)
-  }
-
-  const handleFollowUp = async () => {
-    if (!followUpText.trim()) return
-    const message = followUpText
-    setFollowUpText('')
-    setMessageHistory((prev) => [...prev, message])
-    await session.followUp(message)
-  }
-
-  const matchesSubmitHotkey = (e: React.KeyboardEvent): boolean => {
-    if (e.key !== 'Enter') return false
-
-    switch (settings.submitHotkey) {
-      case 'Ctrl+Enter':
-        return (e.ctrlKey || e.metaKey) && !e.shiftKey
-      case 'Ctrl+Shift+Enter':
-        return (e.ctrlKey || e.metaKey) && e.shiftKey
-      case 'Enter':
-        return !e.ctrlKey && !e.metaKey && !e.shiftKey
-      default:
-        return false
-    }
-  }
-
-  const handleInputKeyDown = (e: React.KeyboardEvent) => {
-    if (matchesSubmitHotkey(e)) {
-      e.preventDefault()
-      if (isEnabled) handleCheck()
-    }
-  }
-
-  const handleFollowUpKeyDown = (e: React.KeyboardEvent) => {
-    if (matchesSubmitHotkey(e)) {
-      e.preventDefault()
-      handleFollowUp()
-    }
-  }
+  const {
+    inputText,
+    followUpText,
+    messageHistory,
+    activeTab,
+    textareaRef,
+    session,
+    hasApiKey,
+    isEnabled,
+    check,
+    followUp,
+    handleInputKeyDown,
+    handleFollowUpKeyDown,
+    handleInputChange,
+    handleFollowUpChange,
+    showEditorTab,
+    showHistoryTab
+  } = useMainView(settings)
 
   return (
     <div className="main-view">
@@ -89,14 +39,14 @@ export function MainView({ settings }: Props) {
         <div className="tabs__bar">
           <button
             className={`tabs__btn${activeTab === 'editor' ? ' tabs__btn--active' : ''}`}
-            onClick={() => setActiveTab('editor')}
+            onClick={showEditorTab}
           >
             Text to check
           </button>
           {messageHistory.length > 0 && (
             <button
               className={`tabs__btn${activeTab === 'history' ? ' tabs__btn--active' : ''}`}
-              onClick={() => setActiveTab('history')}
+              onClick={showHistoryTab}
             >
               Conversation history ({messageHistory.length})
             </button>
@@ -109,13 +59,13 @@ export function MainView({ settings }: Props) {
               ref={textareaRef}
               id="input-text"
               value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
               placeholder={`Paste or type text here, or press your hotkey to auto-fill from clipboard. ${settings.submitHotkey} to check.`}
               rows={6}
               disabled={session.loading}
             />
-            <button onClick={handleCheck} disabled={!isEnabled} className="main-view__check-btn">
+            <button onClick={check} disabled={!isEnabled} className="main-view__check-btn">
               {session.loading && !session.result ? 'Checking...' : 'Check Grammar'}
             </button>
           </div>
@@ -148,14 +98,14 @@ export function MainView({ settings }: Props) {
         <section className="main-view__chat">
           <textarea
             value={followUpText}
-            onChange={(e) => setFollowUpText(e.target.value)}
+            onChange={handleFollowUpChange}
             onKeyDown={handleFollowUpKeyDown}
             placeholder='Ask for changes... e.g. "Make it more formal" or "Shorter version"'
             rows={2}
             disabled={session.loading}
           />
           <button
-            onClick={handleFollowUp}
+            onClick={followUp}
             disabled={session.loading || !followUpText.trim()}
             className="main-view__send-btn"
           >

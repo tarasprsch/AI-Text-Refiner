@@ -35,7 +35,8 @@ vi.mock('electron', () => ({
   shell: { openExternal: vi.fn() }
 }))
 
-vi.mock('path', () => ({
+vi.mock(import('path'), async (original) => ({
+  ...(await original()),
   join: (...args: string[]) => args.join('/')
 }))
 

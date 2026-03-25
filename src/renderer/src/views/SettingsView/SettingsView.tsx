@@ -1,10 +1,7 @@
 import { AppSettings } from '@shared/appSettings'
-import type { ModelEntry } from '@shared/geminiModelsEntry'
-import type { SubmitHotkey } from '@shared/hotkeys'
 import { getHotkeyLabel, VALID_SUBMIT_HOTKEYS } from '@shared/hotkeys'
-import { useEffect, useState } from 'react'
-import { ipcApi } from '../../api/ipcApi'
 import './SettingsView.css'
+import { useSettingsView } from './useSettingsView'
 
 interface Props {
   settings: AppSettings
@@ -12,66 +9,22 @@ interface Props {
   onBack: () => void
 }
 
-const MODIFIER_KEYS = new Set(['Control', 'Shift', 'Alt', 'Meta'])
-
 export function SettingsView({ settings, onUpdate, onBack }: Props) {
-  const [apiKey, setApiKey] = useState(settings.geminiApiKey)
-  const [hotkey, setHotkey] = useState(settings.hotkey)
-  const [isRecording, setIsRecording] = useState(false)
-  const [hotkeyStatus, setHotkeyStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [apiKeySaved, setApiKeySaved] = useState(false)
-  const [models, setModels] = useState<ModelEntry[]>([])
-
-  useEffect(() => {
-    ipcApi.getModels().then(setModels)
-  }, [])
-
-  useEffect(() => {
-    if (!isRecording) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      if (MODIFIER_KEYS.has(e.key)) return
-
-      const parts: string[] = []
-      if (e.ctrlKey) parts.push('Ctrl')
-      if (e.altKey) parts.push('Alt')
-      if (e.shiftKey) parts.push('Shift')
-
-      const keyMap: Record<string, string> = {
-        ' ': 'Space',
-        ArrowUp: 'Up',
-        ArrowDown: 'Down',
-        ArrowLeft: 'Left',
-        ArrowRight: 'Right'
-      }
-      parts.push(keyMap[e.key] ?? e.key.toUpperCase())
-
-      setHotkey(parts.join('+'))
-      setIsRecording(false)
-    }
-
-    window.addEventListener('keydown', handleKeyDown, true)
-    return () => window.removeEventListener('keydown', handleKeyDown, true)
-  }, [isRecording])
-
-  const handleSaveApiKey = async () => {
-    await onUpdate('geminiApiKey', apiKey)
-    setApiKeySaved(true)
-    setTimeout(() => setApiKeySaved(false), 2000)
-  }
-
-  const handleApplyHotkey = async () => {
-    const success = await ipcApi.registerShortcut(hotkey)
-    if (success) {
-      await onUpdate('hotkey', hotkey)
-      setHotkeyStatus('success')
-    } else {
-      setHotkeyStatus('error')
-    }
-    setTimeout(() => setHotkeyStatus('idle'), 3000)
-  }
+  const {
+    apiKey,
+    hotkey,
+    isRecording,
+    hotkeyStatus,
+    apiKeySaved,
+    models,
+    handleChangeApiKey,
+    saveApiKey,
+    handleChangeModel,
+    applyHotkey,
+    handleChangeSubmitHotkey,
+    toggleRecording,
+    cancelRecording
+  } = useSettingsView({ settings, onUpdate })
 
   return (
     <div className="settings">
@@ -99,11 +52,11 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
           <input
             type="password"
             value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
+            onChange={handleChangeApiKey}
             placeholder="AIza..."
             autoComplete="off"
           />
-          <button onClick={handleSaveApiKey} className="settings__save-btn">
+          <button onClick={saveApiKey} className="settings__save-btn">
             {apiKeySaved ? '✓ Saved' : 'Save Key'}
           </button>
         </div>
@@ -114,11 +67,7 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
         <p className="settings__description">
           Choose which Gemini model to use for grammar checking.
         </p>
-        <select
-          className="settings__select"
-          value={settings.geminiModel}
-          onChange={(e) => onUpdate('geminiModel', e.target.value)}
-        >
+        <select className="settings__select" value={settings.geminiModel} onChange={handleChangeModel}>
           {models.map((m) => (
             <option key={m.id} value={m.id}>
               {m.label}
@@ -135,20 +84,20 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
         <div className="hotkey-recorder">
           <div className="hotkey-recorder__display">{hotkey}</div>
           <button
-            onClick={() => setIsRecording((r) => !r)}
+            onClick={toggleRecording}
             className={`hotkey-recorder__btn ${isRecording ? 'hotkey-recorder__btn--recording' : ''}`}
           >
             {isRecording ? 'Press a key combination...' : 'Change Hotkey'}
           </button>
           {isRecording && (
-            <button onClick={() => setIsRecording(false)} className="hotkey-recorder__cancel-btn">
+            <button onClick={cancelRecording} className="hotkey-recorder__cancel-btn">
               Cancel
             </button>
           )}
         </div>
         <div className="hotkey-recorder__actions">
           <button
-            onClick={handleApplyHotkey}
+            onClick={applyHotkey}
             className="settings__apply-btn"
             disabled={hotkey === settings.hotkey}
           >
@@ -173,7 +122,7 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
         <select
           className="settings__select"
           value={settings.submitHotkey}
-          onChange={(e) => onUpdate('submitHotkey', e.target.value as SubmitHotkey)}
+          onChange={handleChangeSubmitHotkey}
         >
           {[...VALID_SUBMIT_HOTKEYS].map((hotkey) => (
             <option key={hotkey} value={hotkey}>

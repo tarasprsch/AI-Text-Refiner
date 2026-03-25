@@ -14,12 +14,11 @@ export const ipcApi = {
   registerShortcut: (accelerator: string): Promise<boolean> =>
     window.api.invoke('shortcut:register', accelerator),
 
-  onNavigate: (listener: (view: string) => void): (() => void) =>
-    window.api.on('navigate', listener),
+  onNavigate: (listener: (view: string) => void) => window.api.on('navigate', listener),
 
-  onSettingsChanged: (listener: (settings: AppSettings) => void): (() => void) =>
+  onSettingsChanged: (listener: (settings: AppSettings) => void) =>
     window.api.on('settings:changed', listener),
 
-  onHotkeyTriggered: (listener: (text: string) => void): (() => void) =>
+  onHotkeyTriggered: (listener: (text: string) => void) =>
     window.api.on('hotkey:triggered', listener)
 }
