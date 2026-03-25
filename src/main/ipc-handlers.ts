@@ -1,6 +1,6 @@
 import { ModelEntry } from '@shared/geminiModelsEntry'
 import type { CommandChannel, IpcCommands } from '@shared/ipc-contract'
-import { app, clipboard, ipcMain } from 'electron'
+import { clipboard, ipcMain } from 'electron'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { MainWindow } from './utils/MainWindow'
@@ -15,7 +15,7 @@ export function setupIpcHandlers(mainWindow: MainWindow, settings: SettingsStore
   handle('clipboard:read', () => clipboard.readText())
 
   handle('models:get', () => {
-    const modelsPath = join(app.getAppPath(), 'geminiModels.json')
+    const modelsPath = join(process.resourcesPath, 'geminiModels.json')
     const result = JSON.parse(readFileSync(modelsPath, 'utf-8')) as ModelEntry[]
     return result
   })
