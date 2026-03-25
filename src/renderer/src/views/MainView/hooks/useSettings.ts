@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { AppSettings } from '@shared/ipc-contract'
-import { SETTINGS_DEFAULTS } from '@shared/ipc-contract'
+
+import { AppSettings, SETTINGS_DEFAULTS } from '@shared/appSettings'
 import { ipcApi } from '../../../api/ipcApi'
 
 export function useSettings() {

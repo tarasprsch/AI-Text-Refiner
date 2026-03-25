@@ -1,23 +1,5 @@
-import type { SubmitHotkey } from './hotkeys'
-
-export interface ModelEntry {
-  id: string
-  label: string
-}
-
-export interface AppSettings {
-  geminiApiKey: string
-  geminiModel: string
-  hotkey: string
-  submitHotkey: SubmitHotkey
-}
-
-export const SETTINGS_DEFAULTS: AppSettings = {
-  geminiApiKey: '',
-  geminiModel: 'gemini-2.5-flash-lite',
-  hotkey: 'Ctrl+Shift+Space',
-  submitHotkey: 'Ctrl+Enter'
-}
+import { AppSettings } from './appSettings'
+import { ModelEntry } from './geminiModelsEntry'
 
 // ── IPC Commands (renderer invokes, main handles) ──
 
@@ -30,24 +12,7 @@ export interface IpcCommands {
   'window:hide': { params: []; result: void }
 }
 
-// ── IPC Events (main pushes to renderer) ──
-
-export interface IpcEvents {
-  navigate: { params: [view: string] }
-  'hotkey:triggered': { params: [text: string] }
-  'settings:changed': { params: [settings: AppSettings] }
-}
-
-// ── Derived utility types ──
-
 export type CommandChannel = keyof IpcCommands
-export type EventChannel = keyof IpcEvents
-
-export type CommandHandler<C extends CommandChannel> = (
-  ...args: IpcCommands[C]['params']
-) => IpcCommands[C]['result'] | Promise<IpcCommands[C]['result']>
-
-// ── Allowed channel sets for runtime validation in preload ──
 
 export const ALLOWED_COMMANDS: ReadonlySet<string> = new Set<CommandChannel>([
   'clipboard:read',
@@ -57,6 +22,16 @@ export const ALLOWED_COMMANDS: ReadonlySet<string> = new Set<CommandChannel>([
   'shortcut:register',
   'window:hide'
 ])
+
+// ── IPC Events (main pushes to renderer) ──
+
+export interface IpcEvents {
+  navigate: { params: [view: string] }
+  'hotkey:triggered': { params: [text: string] }
+  'settings:changed': { params: [settings: AppSettings] }
+}
+
+export type EventChannel = keyof IpcEvents
 
 export const ALLOWED_EVENTS: ReadonlySet<string> = new Set<EventChannel>([
   'hotkey:triggered',

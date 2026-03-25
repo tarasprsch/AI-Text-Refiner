@@ -1,4 +1,5 @@
-import type { AppSettings, ModelEntry } from '@shared/ipc-contract'
+import { AppSettings } from '@shared/appSettings'
+import type { ModelEntry } from '@shared/geminiModelsEntry'
 
 export const ipcApi = {
   hideWindow: (): Promise<void> => window.api.invoke('window:hide'),

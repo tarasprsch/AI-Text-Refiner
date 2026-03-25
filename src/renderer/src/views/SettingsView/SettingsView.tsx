@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { getHotkeyLabel, VALID_SUBMIT_HOTKEYS } from '@shared/hotkeys'
+import { AppSettings } from '@shared/appSettings'
+import type { ModelEntry } from '@shared/geminiModelsEntry'
 import type { SubmitHotkey } from '@shared/hotkeys'
-import type { AppSettings, ModelEntry } from '@shared/ipc-contract'
+import { getHotkeyLabel, VALID_SUBMIT_HOTKEYS } from '@shared/hotkeys'
+import { useEffect, useState } from 'react'
 import { ipcApi } from '../../api/ipcApi'
 import './SettingsView.css'
 

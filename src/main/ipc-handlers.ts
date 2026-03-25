@@ -1,10 +1,15 @@
-import type { CommandChannel, CommandHandler, ModelEntry } from '@shared/ipc-contract'
+import { ModelEntry } from '@shared/geminiModelsEntry'
+import type { CommandChannel, IpcCommands } from '@shared/ipc-contract'
 import { app, clipboard, ipcMain } from 'electron'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { MainWindow } from './utils/MainWindow'
 import type { SettingsStore } from './utils/SettingsStore'
 import { registerHotkey } from './utils/shortcuts'
+
+type CommandHandler<C extends CommandChannel> = (
+  ...args: IpcCommands[C]['params']
+) => IpcCommands[C]['result'] | Promise<IpcCommands[C]['result']>
 
 export function setupIpcHandlers(mainWindow: MainWindow, settings: SettingsStore): void {
   handle('clipboard:read', () => clipboard.readText())

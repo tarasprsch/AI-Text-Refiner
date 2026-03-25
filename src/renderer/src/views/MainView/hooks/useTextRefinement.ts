@@ -1,5 +1,5 @@
+import { AppSettings } from '@shared/appSettings'
 import { useCallback, useRef, useState } from 'react'
-import { AppSettings } from '@shared/ipc-contract'
 import { GeminiChat } from './utils/GeminiChat'
 import { parseResponse } from './utils/parseResponse'
 
