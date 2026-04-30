@@ -8,7 +8,7 @@ export function useMainView(settings: AppSettings) {
   const [inputText, setInputText] = useState('')
   const [followUpText, setFollowUpText] = useState('')
   const [messageHistory, setMessageHistory] = useState<string[]>([])
-  const [activeTab, setActiveTab] = useState<'editor' | 'history'>('editor')
+  const [activeTab, setActiveTab] = useState<'editor' | 'followup' | 'history'>('editor')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const session = useTextRefinement(settings)
 
@@ -91,6 +91,7 @@ export function useMainView(settings: AppSettings) {
     setFollowUpText(e.target.value)
 
   const showEditorTab = () => setActiveTab('editor')
+  const showFollowUpTab = () => setActiveTab('followup')
   const showHistoryTab = () => setActiveTab('history')
 
   return {
@@ -109,6 +110,7 @@ export function useMainView(settings: AppSettings) {
     handleInputChange,
     handleFollowUpChange,
     showEditorTab,
+    showFollowUpTab,
     showHistoryTab
   }
 }

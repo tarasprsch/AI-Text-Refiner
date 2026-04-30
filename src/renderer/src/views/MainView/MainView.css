@@ -88,6 +88,10 @@
   color: var(--text-primary);
 }
 
+.tabs__btn--right {
+  margin-left: auto;
+}
+
 .tabs__btn--active {
   color: var(--text-primary);
   border-bottom-color: var(--accent);

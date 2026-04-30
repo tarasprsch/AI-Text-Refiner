@@ -1,6 +1,6 @@
 # AI Text Refiner
 
-A lightweight Windows system tray application that can improve your text using Google Gemini AI. Copy any text, press a hotkey, and instantly get multiple improved variants — perfect for polishing workplace chat messages before sending them.
+A lightweight Windows system tray application that can improve your text using Google Gemini AI. Copy any text, press a hotkey, and instantly get improved variants, then refine the result using the dedicated "Ask for changes" tab without starting over.
 
 ![main window](docs/images/screenshot-main-window.png)
 
@@ -8,7 +8,8 @@ A lightweight Windows system tray application that can improve your text using G
 
 - **One-hotkey workflow** — press `Ctrl+Shift+Space` (customizable) from any app to open the refiner window with your clipboard text pre-filled
 - **3 style variants** — each check returns three rewritten options (e.g. Clear, Professional, Concise) so you can pick the tone that fits
-- **Follow-up refinements** — ask for further changes in a conversational style (e.g. "Make it shorter", "More casual") without starting over
+- **Follow-up refinements** — use the dedicated "Ask for changes" tab after a check to request edits in a conversational style (e.g. "Make it shorter", "More formal")
+- **History tab** — review previous input and follow-up requests
 - **One-click copy** — click any variant to copy it to your clipboard, ready to paste
 - **Configurable Gemini model** — choose between Gemini 2.5 Flash Lite, 2.5 Flash, 2.5 Pro, 3.1 Flash Lite, and 3.1 Pro
 - **Customizable hotkeys** — record a new global hotkey and a submit shortcut directly in Settings
@@ -47,8 +48,8 @@ No billing account or credit card is required for the free tier. You can check y
 2. Copy any text to your clipboard (`Ctrl+C`)
 3. Press `Ctrl+Shift+Space` (or your custom hotkey) — the app window opens with your clipboard text already loaded
 4. Press `Ctrl+Enter` to refine — you'll get three improved variants
-5. Not happy with the results? Type feedback in the "Ask for changes…" field (e.g. "Make it shorter", "More formal") and submit again. Repeat until you're satisfied
-   **Tip:** Use the History tab to review your previous refinement requests.
+5. Not happy with the results? switch to the "Ask for changes" tab, type feedback (e.g. "Make it shorter", "More formal"), and submit again. Repeat until you're satisfied.
+   **Tip:** Use the right-aligned History tab to review your previous refinement requests.
 6. Click any variant to copy it to your clipboard
 7. Press `Escape` or click away to hide the window
 

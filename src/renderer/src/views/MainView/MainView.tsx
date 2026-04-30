@@ -24,6 +24,7 @@ export function MainView({ settings }: Props) {
     handleInputChange,
     handleFollowUpChange,
     showEditorTab,
+    showFollowUpTab,
     showHistoryTab
   } = useMainView(settings)
 
@@ -43,12 +44,20 @@ export function MainView({ settings }: Props) {
           >
             Text to check
           </button>
+          {session.hasSession && session.result && (
+            <button
+              className={`tabs__btn${activeTab === 'followup' ? ' tabs__btn--active' : ''}`}
+              onClick={showFollowUpTab}
+            >
+              Ask for changes
+            </button>
+          )}
           {messageHistory.length > 0 && (
             <button
-              className={`tabs__btn${activeTab === 'history' ? ' tabs__btn--active' : ''}`}
+              className={`tabs__btn tabs__btn--right${activeTab === 'history' ? ' tabs__btn--active' : ''}`}
               onClick={showHistoryTab}
             >
-              Conversation history ({messageHistory.length})
+              History ({messageHistory.length})
             </button>
           )}
         </div>
@@ -66,7 +75,7 @@ export function MainView({ settings }: Props) {
               disabled={session.loading}
             />
             <button onClick={check} disabled={!isEnabled} className="main-view__check-btn">
-              {session.loading && !session.result ? 'Checking...' : 'Check Grammar'}
+              {session.loading && !session.result ? 'Checking...' : 'Check'}
             </button>
           </div>
         )}
@@ -92,27 +101,27 @@ export function MainView({ settings }: Props) {
             )}
           </div>
         )}
-      </section>
 
-      {session.hasSession && session.result && (
-        <section className="main-view__chat">
-          <textarea
-            value={followUpText}
-            onChange={handleFollowUpChange}
-            onKeyDown={handleFollowUpKeyDown}
-            placeholder='Ask for changes... e.g. "Make it more formal" or "Shorter version"'
-            rows={2}
-            disabled={session.loading}
-          />
-          <button
-            onClick={followUp}
-            disabled={session.loading || !followUpText.trim()}
-            className="main-view__send-btn"
-          >
-            {session.loading && session.result ? 'Sending...' : 'Send'}
-          </button>
-        </section>
-      )}
+        {activeTab === 'followup' && (
+          <div className="tabs__content">
+            <textarea
+              value={followUpText}
+              onChange={handleFollowUpChange}
+              onKeyDown={handleFollowUpKeyDown}
+              placeholder='Ask for changes... e.g. "Make it more formal" or "Shorter version"'
+              rows={2}
+              disabled={session.loading}
+            />
+            <button
+              onClick={followUp}
+              disabled={session.loading || !followUpText.trim()}
+              className="main-view__send-btn"
+            >
+              {session.loading && session.result ? 'Sending...' : 'Send'}
+            </button>
+          </div>
+        )}
+      </section>
 
       {session.loading && <div className="main-view__loading">Analysing with Gemini...</div>}
 
