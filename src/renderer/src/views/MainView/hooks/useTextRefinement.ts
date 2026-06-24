@@ -13,12 +13,17 @@ export interface RefinementResult {
   explanation?: string
 }
 
+export interface RefinementError {
+  text: string
+  details?: string
+}
+
 type Props = Pick<AppSettings, 'geminiApiKey' | 'geminiModel'>
 
 export function useTextRefinement(config: Props) {
   const [result, setResult] = useState<RefinementResult | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<RefinementError | null>(null)
   const chatRef = useRef<GeminiChat | null>(null)
   const configRef = useRef(config)
   configRef.current = config
@@ -26,11 +31,12 @@ export function useTextRefinement(config: Props) {
   const sendChatMessage = useCallback(async (chat: GeminiChat, message: string) => {
     setLoading(true)
     setError(null)
+    let raw: string | null = null
     try {
-      const raw = await chat.sendMessage(message)
+      raw = await chat.sendMessage(message)
       setResult(parseResponse(raw))
     } catch (err) {
-      setError(getErrorText(err))
+      setError(getErrorText(err, raw))
     } finally {
       setLoading(false)
     }
@@ -41,16 +47,17 @@ export function useTextRefinement(config: Props) {
       const apiKey = configRef.current.geminiApiKey
       const model = configRef.current.geminiModel
       if (!apiKey) {
-        setError('No Gemini API key configured. Go to Settings to add one.')
+        setError({ text: 'No Gemini API key configured. Go to Settings to add one.' })
         return
       }
       if (!text.trim()) {
-        setError('No text to check.')
+        setError({ text: 'No text to check.' })
         return
       }
 
       chatRef.current = null
       setResult(null)
+      setError(null)
 
       const chat = new GeminiChat(apiKey, model)
       chatRef.current = chat
@@ -62,7 +69,7 @@ export function useTextRefinement(config: Props) {
   const followUp = useCallback(
     async (message: string) => {
       if (!chatRef.current) {
-        setError('No active session. Run a grammar check first.')
+        setError({ text: 'No active session. Run a grammar check first.' })
         return
       }
 
@@ -91,8 +98,19 @@ export function useTextRefinement(config: Props) {
   }
 }
 
-function getErrorText(err: unknown): string {
-  if (err instanceof SyntaxError) return 'Gemini returned an unexpected format. Please try again.'
-  if (err instanceof Error) return `API Error: ${err.message}`
-  return 'An unknown error occurred.'
+function getErrorText(err: unknown, raw?: string | null): RefinementError {
+  if (err instanceof SyntaxError) {
+    return {
+      text: 'Gemini returned an unexpected format. Please try again.',
+      ...(raw ? { details: raw } : {})
+    }
+  }
+  if (err instanceof Error) {
+    return {
+      text: `API Error: ${err.message}`
+    }
+  }
+  return {
+    text: 'An unknown error occurred.'
+  }
 }

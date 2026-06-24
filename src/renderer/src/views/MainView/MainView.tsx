@@ -1,4 +1,5 @@
 import { AppSettings } from '@shared/appSettings'
+import { ErrorMessage } from './components/ErrorMessage'
 import { ResultPanel } from './components/ResultPanel'
 import './MainView.css'
 import { useMainView } from './useMainView'
@@ -125,7 +126,7 @@ export function MainView({ settings }: Props) {
 
       {session.loading && <div className="main-view__loading">Analysing with Gemini...</div>}
 
-      {session.error && <div className="main-view__error">{session.error}</div>}
+      {session.error && <ErrorMessage error={session.error} />}
 
       {session.result && (
         <ResultPanel options={session.result.options} explanation={session.result.explanation} />

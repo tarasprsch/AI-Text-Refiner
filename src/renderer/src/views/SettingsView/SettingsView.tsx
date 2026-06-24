@@ -65,9 +65,14 @@ export function SettingsView({ settings, onUpdate, onBack }: Props) {
       <section className="settings__section">
         <h3 className="settings__section-title">Gemini Model</h3>
         <p className="settings__description">
-          Choose which Gemini model to use for grammar checking.
+          Choose which Gemini model to use for grammar checking ('xxxxxxx Flash Lite' models are
+          recommended).
         </p>
-        <select className="settings__select" value={settings.geminiModel} onChange={handleChangeModel}>
+        <select
+          className="settings__select"
+          value={settings.geminiModel}
+          onChange={handleChangeModel}
+        >
           {models.map((m) => (
             <option key={m.id} value={m.id}>
               {m.label}

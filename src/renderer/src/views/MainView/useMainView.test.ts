@@ -12,7 +12,7 @@ const mockSession: ReturnType<typeof useTextRefinement> = {
   reset: vi.fn(),
   result: null,
   loading: false,
-  error: null as string | null,
+  error: null,
   hasSession: false
 }
 

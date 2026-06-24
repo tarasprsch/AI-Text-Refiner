@@ -30,6 +30,51 @@
   font-size: 13px;
 }
 
+.main-view__error-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.main-view__error-message {
+  flex: 1;
+  line-height: 1.45;
+}
+
+.main-view__error-toggle {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+}
+
+.main-view__error-toggle:hover {
+  background: rgba(243, 139, 168, 0.12);
+}
+
+.main-view__error-detail {
+  max-height: 220px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  user-select: text;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(243, 139, 168, 0.35);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  padding: 10px;
+}
+
 .main-view__check-btn,
 .main-view__send-btn {
   background: var(--accent);
