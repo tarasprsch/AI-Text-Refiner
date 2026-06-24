@@ -7,7 +7,7 @@ export function parseResponse(raw: string): RefinementResult {
     .replace(/\s*```$/i, '')
     .trim()
 
-  const parsed = JSON.parse(cleaned)
+  const parsed = JSON.parse(stripTrailingJsonCommas(cleaned))
 
   if (!parsed || !Array.isArray(parsed.options)) {
     throw new Error('Response missing "options" array')
@@ -23,4 +23,10 @@ export function parseResponse(raw: string): RefinementResult {
     options: parsed.options,
     explanation: typeof parsed.explanation === 'string' ? parsed.explanation : undefined
   }
+}
+
+function stripTrailingJsonCommas(value: string): string {
+  return value.replace(/"(?:\\.|[^"\\])*"|,\s*(?=[}\]])/g, (match) =>
+    match.startsWith(',') ? '' : match
+  )
 }

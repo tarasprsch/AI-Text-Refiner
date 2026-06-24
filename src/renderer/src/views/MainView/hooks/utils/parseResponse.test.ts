@@ -81,4 +81,48 @@ describe('parseResponse', () => {
     })
     expect(() => parseResponse(json)).toThrow('correctedText')
   })
+
+  it('parses JSON-like model responses with trailing commas', () => {
+    const json = `{
+      "options": [
+        {
+          "label": "Clear",
+          "correctedText": "Hey everyone",
+        },
+        {
+          "label": "Professional",
+          "correctedText": "Hi team",
+        },
+        {
+          "label": "Concise",
+          "correctedText": "Hi all!",
+        }
+      ],
+      "explanation": "Corrected punctuation and grammar."
+    }`
+
+    const result = parseResponse(json)
+
+    expect(result.options).toHaveLength(3)
+    expect(result.options[2].label).toBe('Concise')
+    expect(result.options[2].correctedText).toContain('Hi all!')
+    expect(result.explanation).toBe('Corrected punctuation and grammar.')
+  })
+
+  it('keeps comma and brace text inside strings when removing trailing commas', () => {
+    const json = `{
+      "options": [
+        {
+          "label": "Clear",
+          "correctedText": "Keep this text unchanged: comma, } and bracket, ].",
+        }
+      ]
+    }`
+
+    const result = parseResponse(json)
+
+    expect(result.options[0].correctedText).toBe(
+      'Keep this text unchanged: comma, } and bracket, ].'
+    )
+  })
 })
